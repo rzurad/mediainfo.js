@@ -4,11 +4,9 @@ set -xe
 
 LIBMEDIAINFO_VERSION=20.09
 LIBZEN_VERSION=0.4.38
-ZLIB_VERSION=1.2.11
 
 LIBMEDIAINFO_URL="https://mediaarea.net/download/source/libmediainfo/${LIBMEDIAINFO_VERSION}/libmediainfo_${LIBMEDIAINFO_VERSION}.tar.bz2"
 LIBZEN_URL="https://mediaarea.net/download/source/libzen/${LIBZEN_VERSION}/libzen_${LIBZEN_VERSION}.tar.bz2"
-ZLIB_URL="http://zlib.net/zlib-${ZLIB_VERSION}.tar.gz"
 
 source scripts/build-opts
 
@@ -16,17 +14,8 @@ mkdir -p build/vendor
 cd build/vendor
 
 # download sources
-wget ${LIBMEDIAINFO_URL} -q -O - | tar -xj
-wget ${LIBZEN_URL} -q -O - | tar -xj
-mkdir -p Shared/Source
-wget ${ZLIB_URL} -q -O - | tar -xz -C Shared/Source
-mv Shared/Source/zlib-${ZLIB_VERSION} Shared/Source/zlib
-
-# zlib
-cd Shared/Source/zlib
-emconfigure ./configure
-emmake make
-cd ../../..
+curl -sL ${LIBMEDIAINFO_URL} | tar -xj
+curl -sL ${LIBZEN_URL} | tar -xj
 
 # Zenlib
 cd ZenLib/Project/GNU/Library/
@@ -36,7 +25,7 @@ emconfigure \
   --host=le32-unknown-nacl \
   CFLAGS="${CFLAGS}" \
   CXXFLAGS="${CXXFLAGS}"
-emmake make
+emmake make -j12
 cd ../../../..
 
 # MediaInfoLib
@@ -44,8 +33,7 @@ cd MediaInfoLib/Project/GNU/Library
 ./autogen.sh
 emconfigure \
   ./configure \
-  --with-libz-static \
   --host=le32-unknown-nacl \
   CFLAGS="${CFLAGS}" \
   CXXFLAGS="${CXXFLAGS} ${MediaInfoLib_CXXFLAGS}"
-emmake make
+emmake make -j12

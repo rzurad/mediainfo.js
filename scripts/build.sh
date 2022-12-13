@@ -31,7 +31,6 @@ emcc \
   MediaInfoModule.o \
   vendor/MediaInfoLib/Project/GNU/Library/.libs/libmediainfo.a \
   vendor/ZenLib/Project/GNU/Library/.libs/libzen.a \
-  vendor/Shared/Source/zlib/libz.a \
   -o MediaInfoModule.js
 
 echo "import MediaInfoModuleFactory from '../src/MediaInfoModule'" > MediaInfoModule.d.ts

@@ -112,16 +112,23 @@ class MediaInfo implements MediaInfoInterface {
   }
 
   close(): void {
+    console.log('close');
     this.wasmInstance.close()
   }
 
   inform(): string {
+    console.log('inform');
     return this.wasmInstance.inform()
   }
 
   openBufferContinue(data: Uint8Array, size: number): boolean {
+    console.log('openBufferContinue', data, size);
     // bit 3 set -> done
-    return !!(this.wasmInstance.open_buffer_continue(data, size) & 0x08)
+    //return !!(this.wasmInstance.open_buffer_continue(data, size) & 0x08)
+    const toReturn = !!(this.wasmInstance.open_buffer_continue(data, size) & 0x08);
+    console.log('openBufferContinue', toReturn);
+    return toReturn;
+
   }
 
   openBufferContinueGotoGet(): number {
@@ -137,14 +144,17 @@ class MediaInfo implements MediaInfoInterface {
     } else {
       seekTo = seekToLow + seekToHigh * 4294967296
     }
+    console.log('openBufferContinueGotoGet', seekTo);
     return seekTo
   }
 
   openBufferFinalize(): void {
+    console.log('openBufferFinalize');
     this.wasmInstance.open_buffer_finalize()
   }
 
   openBufferInit(size: number, offset: number): void {
+    console.log('openBufferInit', size, offset);
     this.wasmInstance.open_buffer_init(size, offset)
   }
 }
@@ -173,8 +183,8 @@ function MediaInfoFactory(
 
   const mediaInfoModuleFactoryOpts: Partial<MediaInfoModule> = {}
   // Silence all print in module
-  mediaInfoModuleFactoryOpts.print = noopPrint
-  mediaInfoModuleFactoryOpts.printErr = noopPrint
+  //mediaInfoModuleFactoryOpts.print = noopPrint
+  //mediaInfoModuleFactoryOpts.printErr = noopPrint
 
   mediaInfoModuleFactoryOpts.onAbort = (err) => {
     if (errCallback) {
